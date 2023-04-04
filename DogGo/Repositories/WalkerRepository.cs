@@ -31,8 +31,14 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT Id, [Name], ImageUrl, NeighborhoodId
-                        FROM Walker
+                        SELECT Walker.Id,
+                             Walker.[Name] AS WalkerName, 
+                             Walker.ImageUrl, 
+                             Walker.NeighborhoodId,
+                             Neighborhood.Id AS NeighborhoodId,
+                             Neighborhood.[Name] AS NeighborhoodName
+                        FROM Walker INNER JOIN Neighborhood 
+                        ON Neighborhood.Id= Walker.NeighborhoodId
                     ";
 
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -43,9 +49,14 @@ namespace DogGo.Repositories
                         Walker walker = new Walker
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("Name")),
-                            ImageUrl = reader.GetString(reader.GetOrdinal("ImageUrl")),
-                            NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId"))
+                            Name = reader.GetString(reader.GetOrdinal("WalkerName")),
+                            //NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId")),
+                            Neighborhood = new Neighborhood()
+                            {
+                                //Id = reader.GetInt32(reader.GetOrdinal("NeighborhoodId")),
+                                Name = reader.GetString(reader.GetOrdinal("NeighborhoodName"))
+                            },
+                            ImageUrl = reader.GetString(reader.GetOrdinal("ImageUrl"))
                         };
 
                         walkers.Add(walker);
@@ -66,9 +77,16 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT Id, [Name], ImageUrl, NeighborhoodId
-                        FROM Walker
-                        WHERE Id = @id
+                        SELECT Walker.Id,
+                             Walker.[Name] As WalkerName, 
+                             Walker.ImageUrl, 
+                             Neighborhood.[Name] AS NeighborhoodName,
+                             Dog.[Name] As DogName
+                        FROM Walker 
+                        INNER JOIN Neighborhood ON Neighborhood.Id= Walker.NeighborhoodId
+                        INNER JoIN Walks ON Walker.Id = Walks.WalkerId
+                        INNER Join Dog ON Walks.DogId = Dog.Id
+                        WHERE Walker.Id = @id
                     ";
 
                     cmd.Parameters.AddWithValue("@id", id);
@@ -80,14 +98,29 @@ namespace DogGo.Repositories
                         Walker walker = new Walker
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            Name = reader.GetString(reader.GetOrdinal("WalkerName")),
+                            //NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId")),
+                            Neighborhood = new Neighborhood()
+                            {
+                                //Id = reader.GetInt32(reader.GetOrdinal("NeighborhoodId")),
+                                Name = reader.GetString(reader.GetOrdinal("NeighborhoodName"))
+                            },
                             ImageUrl = reader.GetString(reader.GetOrdinal("ImageUrl")),
-                            NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId"))
+                            Dogs = new List<Dog>()
                         };
+
+                        while (reader.Read())
+                        {
+                            walker.Dogs.Add(new Dog()
+                            {
+                                Name = reader.GetString(reader.GetOrdinal("DogName"))
+                            });
+                        }
 
                         reader.Close();
                         return walker;
                     }
+
                     else
                     {
                         reader.Close();

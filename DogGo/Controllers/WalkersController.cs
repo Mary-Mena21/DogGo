@@ -16,19 +16,26 @@ namespace DogGo.Controllers
             _walkerRepo = walkerRepository;
         }
 
-        //// GET: WalkersController
-        //public ActionResult Index()
-        //{
-        //    return View();
-        //}
+        public ActionResult Index()
+        {
+            List<Walker> walkers = _walkerRepo.GetAllWalkers();
 
-        // GET: WalkersController/Details/5
-        //public ActionResult Details(int id)
-        //{
-        //    return View();
-        //}
+            return View(walkers);
+        }
 
-        // GET: WalkersController/Create
+        // GET: Walkers/Details/5
+        public ActionResult Details(int id)
+        {
+            Walker walker = _walkerRepo.GetWalkerById(id);
+
+            if (walker == null)
+            {
+                return NotFound();
+            }
+
+            return View(walker);
+        }
+
         public ActionResult Create()
         {
             return View();
@@ -91,26 +98,21 @@ namespace DogGo.Controllers
             }
         }
         /*--------------------------------------------------------------------*/
+        //// GET: WalkersController
+        //public ActionResult Index()
+        //{
+        //    return View();
+        //}
+
+        // GET: WalkersController/Details/5
+        //public ActionResult Details(int id)
+        //{
+        //    return View();
+        //}
+
+        // GET: WalkersController/Create
+
         // GET: Walkers
-        public ActionResult Index()
-        {
-            List<Walker> walkers = _walkerRepo.GetAllWalkers();
 
-            return View(walkers);
-        }
-
-
-        // GET: Walkers/Details/5
-        public ActionResult Details(int id)
-        {
-            Walker walker = _walkerRepo.GetWalkerById(id);
-
-            if (walker == null)
-            {
-                return NotFound();
-            }
-
-            return View(walker);
-        }
     }
 }
