@@ -8,6 +8,7 @@ builder.Services.AddControllersWithViews();
 //Line Added ()Starup.cs
 builder.Services.AddTransient<IWalkerRepository, WalkerRepository>();
 builder.Services.AddTransient<IOwnerRepository, OwnerRepository>();
+builder.Services.AddTransient<IDogRepository, DogRepository>();
 
 
 //Add DI  Inject DB context inside the services of our application

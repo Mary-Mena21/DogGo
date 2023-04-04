@@ -188,13 +188,13 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"SELECT 
-                                         [Id]
-                                        ,[Email]
-                                        ,[Name]
-                                        ,[Address]
-                                        ,[NeighborhoodId]
-                                        ,[Phone]
-                                    FROM [DogWalkerMVC].[dbo].[Owner]";
+                                             [Id]
+                                            ,[Email]
+                                            ,[Name]
+                                            ,[Address]
+                                            ,[NeighborhoodId]
+                                            ,[Phone]
+                                        FROM [DogWalkerMVC].[dbo].[Owner]";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
